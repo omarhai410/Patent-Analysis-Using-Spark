@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du brevet</title>
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='feuille.png') }}">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@^1.16.0/dist/pdf-lib.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+
+
+    <style>
+        h1.mt-4 + p.lead {
+        border: 1px solid #ccc; /* Ajoute une bordure grise de 1px */
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Ajoute une ombre légère */
+        padding: 10px; /* Ajoute un peu de marge intérieure pour l'espace */
+    }
+.equal-sized-image {
+    width: 220px; /* Largeur fixe pour toutes les images */
+    height: 220px; /* Hauteur fixe pour toutes les images */
+}
+
+ .navbar {
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-dark .navbar-nav .nav-link {
+            color: black;
+        }
+
+        .navbar-dark .navbar-nav .nav-link:hover {
+            background-color: #f4f4f4;
+        }
+
+        .navbar-dark .navbar-brand {
+            color: black;
+        }
+
+        .separator {
+    text-align: center;
+}
+
+.separator hr {
+    margin: 10px 0;
+}
+
+.centered-text {
+    display: inline-block;
+    background-color: white;
+    position: relative;
+    top: -10px;
+    padding: 0 10px;
+}
+ h3.total-results {
+        font-size: 20px; /* Taille de la police */
+        color: #333; /* Couleur du texte */
+        margin-bottom: 10px; /* Marge en bas */
+    }
+ #downloadPdfBtn {
+    border: 2px solid #000; /* Bordure noire */
+    border-radius: 20px; /* Bordure circulaire */
+    padding: 8px 15px; /* Espacement intérieur pour le texte */
+    display: inline-block; /* Pour que la bordure s'adapte à la taille du contenu */
+    text-decoration: none; /* Supprimer la soulignement du lien par défaut */
+    margin-right: 10px; /* Marge à droite pour l'espacement */
+}
+ .footer a {
+            color: green !important;
+        }
+
+
+
+     .user, .login, .signup {
+    border: 2px solid #000; /* Bordure noire */
+    border-radius: 20px; /* Bordure circulaire */
+    padding: 8px 15px; /* Espacement intérieur pour le texte */
+    display: inline-block; /* Pour que la bordure s'adapte à la taille du contenu */
+    text-decoration: none; /* Supprimer la soulignement du lien par défaut */
+    margin-right: 10px;
+}
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.fields {
+    flex: 1;
+}
+
+.pdf {
+    flex: 1;
+    text-align: right;
+}
+.pdf-icon {
+    width: 120px; /* Adjust the width as needed */
+    height: 120px; /* Maintain aspect ratio */
+}
+
+
+
+
+    </style>
+
+</head>
+<body>
+
+<div class="container2">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+<a class="navbar-brand" href="#" style="font-family: 'Jokerman', cursive;">AGROPA</a>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link signup" href="/login2">Deconnexion</a>
+                </li>
+                <li class="nav-item">
+    {% if 'username' in session %}
+        <a class="nav-link user" href="#">{{ session['username'] }}</a>
+    {% else %}
+        <a class="nav-link login" href="#">Login</a>
+    {% endif %}
+</li>
+    <button id="downloadPdfBtn">Télécharger PDF</button>
+
+
+            </ul>
+        </div>
+    </nav>
+</div>
+    <div class="container">
+
+        {% if patent_details.images %}
+<BR>
+        <div class="bordered-images-container">
+        <div class="row">
+            {% set image_count = patent_details.images|length %}
+            {% set row_count = (image_count / 8)|round(0, 'ceil') %}
+            {% set index = 0 %}
+            {% for row in range(row_count|int) %}
+                <div class="row">
+                    {% for i in range(4) %}
+                        {% set image_index = row * 4 + i %}
+                        {% if image_index < image_count %}
+                            <div class="col-md-3">
+                                <img src="{{ patent_details.images[image_index] }}" class="img-fluid equal-sized-image" alt="Image">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+
+
+<br>
+<h2 class="lead font-weight-bold text-dark display-4">{{ patent_details.title }}</h2>
+        <br>
+
+<div style="border: 2px solid greenyellow; padding: 10px; border-radius: 5px; background-color: green; color: white;">
+    <div style="display: inline-block;">
+        {% if patent_details.ID %}
+            <p class="lead" style="font-size: 22px; font-family: Arial;">ID: {{ patent_details.ID }}</p>
+        {% endif %}
+    </div>
+    || <!-- Ajouter le symbole || ici -->
+    <div style="display: inline-block;">
+        {% if patent_details.country %}
+            <p class="lead" style="font-size: 22px; font-family: Arial;">Source: {{ patent_details.country }}</p>
+        {% endif %}
+    </div>
+    || <!-- Ajouter le symbole || ici -->
+    <div style="display: inline-block;">
+        <p class="lead" style="font-size: 22px; font-family: Arial;">Inventors:
+            {% for inventor in patent_details.inventors %}
+                {{ inventor }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+    </div>
+</div>
+
+
+
+
+
+
+
+        <h1 class="mt-4">Détails du brevet</h1>
+
+<p class="lead" style="border: 2px #000; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 10px;"><strong>Description:</strong></p>
+        <p class="lead" id="description-preview">
+            {% for description in patent_details.description[:3] %}
+                {{ description }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+        <button class="btn btn-link" id="read-more-btn">Lire plus</button>
+        <button class="btn btn-link" id="read-less-btn" style="display: none;">Lire moins</button>
+        <p class="lead" id="full-description" style="display: none;">
+            {% for description in patent_details.description[3:] %}
+                {{ description }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+        <script>
+            var readMoreBtn = document.getElementById('read-more-btn');
+            var readLessBtn = document.getElementById('read-less-btn');
+            var descriptionPreview = document.getElementById('description-preview');
+            var fullDescription = document.getElementById('full-description');
+
+            readMoreBtn.addEventListener('click', function() {
+                descriptionPreview.style.display = 'none';
+                fullDescription.style.display = 'block';
+                readMoreBtn.style.display = 'none';
+                readLessBtn.style.display = 'inline';
+            });
+
+            readLessBtn.addEventListener('click', function() {
+                descriptionPreview.style.display = 'block';
+                fullDescription.style.display = 'none';
+                readMoreBtn.style.display = 'inline';
+                readLessBtn.style.display = 'none';
+            });
+        </script>
+
+<div class="wrapper">
+    <div class="fields">
+    {% if patent_details.publication_date %}
+        <p class="lead"><strong>Date de publication:</strong> {{ patent_details.publication_date }}</p>
+    {% endif %}
+
+    {% if patent_details.other_language %}
+        <p class="lead"><strong>Autre Langue:</strong> {{ patent_details.other_language }}</p>
+    {% endif %}
+
+    {% if patent_details.priority_date %}
+        <p class="lead"><strong>Date de priorité:</strong> {{ patent_details.priority_date }}</p>
+    {% endif %}
+
+    {% if patent_details.application_date %}
+        <p class="lead"><strong>Application date:</strong> {{ patent_details.application_date }}</p>
+    {% endif %}
+</div>
+
+
+    <div class="pdf">
+        {% if patent_details.pdf_link %}
+            <a href="{{ patent_details.pdf_link }}" class="btn btn-success">
+                <img src="{{ url_for('static', filename='pdf.png') }}" alt="PDF icon" class="pdf-icon">
+                Télécharger PDF
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<p class="lead" style="border: 2px  #000; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 10px;"><strong>Similaire:</strong></p>
+
+
+{% if patent_details.similar_publications %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Publication Number</th>
+                <th>Publication Date</th>
+                <th>Publication Title</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for publication in patent_details.similar_publications %}
+            <tr>
+                <td><a href="https://patents.google.com/patent/{{ publication.publication_number }}/" class="text-dark">{{ publication.publication_number }}</a></td>
+                <td>{{ publication.publication_date }}</td>
+                <td>{{ publication.publication_title }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+
+        {% if patent_details.current_assignees %}
+        <h2 class="mt-4">Current Assignees:</h2>
+        <ul class="list-group">
+            {% for assignee in patent_details.current_assignees %}
+                <li class="list-group-item">{{ assignee }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if patent_details.claims %}
+    <div class="mt-4">
+        <h2 class="mb-3">Claims:</h2>
+        <ul class="list-group">
+            {% for claim in patent_details.claims %}
+                <li class="list-group-item">{{ claim }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+        {% if patent_details.event_date %}
+        <h2 class="mt-4">Event Date:</h2>
+        <p class="lead">{{ patent_details.event_date }}</p>
+        {% endif %}
+    <!-- Bootstrap JS (optional) -->
+
+    </div>
+<br>
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <h5 style="font-family: 'Jokerman', cursive;">About AGROPA</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">What We Do</a></li>
+          <li><a href="#">Startup Services</a></li>
+          <li><a href="#">Partner With Us</a></li>
+          <li><a href="#">Work In Tech</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5 style="font-family: 'Jokerman', cursive;">Our Sectors</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">Our Space</a></li>
+          <li><a href="#">Who We Work With</a></li>
+          <li><a href="#">Invest With Us</a></li>
+          <li><a href="#">Careers at AGROPA</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5 style="font-family: 'Jokerman', cursive;">Resources</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">Magazine</a></li>
+          <li><a href="#">Events</a></li>
+          <li><a href="#">Research & Insights</a></li>
+          <li><a href="#">Our Results</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5 style="font-family: 'Jokerman', cursive;">Contact</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Supporters</a></li>
+          <li><a href="#">Media & Press</a></li>
+          <li><a href="#">Legal</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <ul class="list-inline">
+          <li class="list-inline-item"><a href="#"><i class="fab fa-facebook"></i></a></li>
+          <li class="list-inline-item"><a href="#"><i class="fab fa-twitter"></i></a></li>
+          <li class="list-inline-item"><a href="#"><i class="fab fa-instagram"></i></a></li>
+          <li class="list-inline-item"><a href="#"><i class="fab fa-linkedin"></i></a></li>
+          <li class="list-inline-item"><a href="#"><i class="fab fa-youtube"></i></a></li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <p>Obtenez des renseignements en français</p>
+        <p>© 2024 Copyright AGROPA. All Rights Reserved</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Ajoutez ce script à la fin de votre fichier HTML, juste avant la balise de fermeture </body> -->
+        <!-- Placez ce bouton là où vous souhaitez afficher la source -->
+
+<!-- Le reste de votre code HTML -->
+
+<script>
+document.getElementById('downloadPdfBtn').addEventListener('click', async function() {
+    // Créer un nouveau document PDF
+    const pdfDoc = await PDFLib.PDFDocument.create();
+    const page = pdfDoc.addPage();
+
+    // Styles CSS personnalisés
+    const styles = {
+        fieldValue: { fontSize: 11, font: await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica), color: PDFLib.rgb(0, 0, 0) },
+        title: { fontSize: 11, font: await pdfDoc.embedFont(PDFLib.StandardFonts.HelveticaBold), color: PDFLib.rgb(0, 1, 0) }, // Vert pour les noms d'attributs
+        border: { color: PDFLib.rgb(0, 1, 0) } // Bordure verte
+    };
+
+    // Ajouter le logo en haut de la page
+    const logoUrl = "{{ url_for('static', filename='feuille.png') }}"; // Assurez-vous de remplacer 'feuille.png' par le nom de fichier correct du logo d'Agropa
+    const logoImageBytes = await fetch(logoUrl).then(res => res.arrayBuffer());
+    const logoImage = await pdfDoc.embedPng(logoImageBytes);
+    const logoDims = logoImage.scale(0.2); // Ajuster la taille du logo selon vos besoins
+    const logoX = page.getWidth() / 2 - logoDims.width / 2;
+    const logoY = page.getHeight() - logoDims.height - 20;
+    page.drawImage(logoImage, {
+        x: logoX,
+        y: logoY,
+        width: logoDims.width,
+        height: logoDims.height,
+    });
+
+    // Ajouter le titre "Agropa" en dessous de l'image du logo
+    const agropaTitle = "Agropa";
+    const agropaTitleX = page.getWidth() / 2 - agropaTitle.length * 2 - 30; // Ajustez la position X en fonction de la longueur du texte
+    const agropaTitleY = logoY - 20; // Ajustez la position Y selon vos besoins
+    page.drawText(agropaTitle, {
+        x: agropaTitleX,
+        y: agropaTitleY,
+        ...styles.title // Utilisez les styles de titre personnalisés si nécessaire
+    });
+
+    // Espacement entre "Bonjour" et le haut de la page
+    const greetingTopSpace = 120;
+
+    // Ajouter "Bonjour" suivi du nom d'utilisateur en haut de la page
+    const greetingText = "Bonjour " + "{{ session['username'] }}"; // Remplacez `{{ session['username'] }}` par le code qui récupère le nom d'utilisateur
+    const greetingX = 50; // Ajustez la position X en fonction de la bordure
+    const greetingY = page.getHeight() - 50 - greetingTopSpace; // Ajustez la position Y en fonction de l'espace au-dessus de la bordure
+    page.drawText(greetingText, {
+        x: greetingX,
+        y: greetingY,
+        ...styles.fieldValue // Utilisez les styles de texte personnalisés si nécessaire
+    });
+
+    // Espacement entre l'image et la phrase ajoutée
+    const imagePhraseSpace = 20;
+
+    // Phrase ajoutée en haut de la bordure
+    const addedPhrase = "Dans le cadre de son effort d'analyse du brevet, Agropa a le plaisir de vous fournir quelques informations sur le brevet.";
+
+    // Ajouter un espace entre l'image et la phrase
+    const addedPhraseY = logoY - logoDims.height - imagePhraseSpace;
+
+    // Espacement entre la phrase et la bordure
+    const phraseBorderSpace = 60;
+
+    // Dessiner la bordure
+    const borderWidth = 520;
+    const borderHeight = 290;
+    const borderX = 50;
+    const borderY = addedPhraseY - phraseBorderSpace - borderHeight;
+    page.drawRectangle({
+        x: borderX,
+        y: borderY,
+        width: borderWidth,
+        height: borderHeight,
+        borderColor: styles.border.color, // Couleur de la bordure
+        borderWidth: 1,
+    });
+
+    // Ajouter la phrase en haut de la bordure avec un retour à la ligne après chaque 7 mots
+    const words = addedPhrase.split(/\s+/);
+    const lines = [];
+    for (let i = 0; i < words.length; i += 7) {
+        lines.push(words.slice(i, i + 7).join(' '));
+    }
+
+    // Écrire chaque ligne de la phrase ajoutée avec un espace entre chaque ligne
+    let currentY = addedPhraseY;
+    lines.forEach(line => {
+        page.drawText(line, { x: borderX + 10, y: currentY, ...styles.fieldValue });
+        currentY -= 12; // Décalage vertical pour la prochaine ligne
+        currentY -= 10; // Ajouter un espace entre chaque ligne
+    });
+
+    // Extraire les informations de la page HTML
+    const title = document.querySelector('h2.display-4').textContent;
+    const idElement = document.querySelector('.lead:nth-child(1)');
+    const id = idElement ? idElement.textContent.trim() : null;
+    const fields = document.querySelectorAll('.fields p.lead');
+
+    let publicationDate = "", otherLanguage = "", priorityDate = "", applicationDate = "";
+    fields.forEach(field => {
+        if (field.textContent.includes('Date de publication:')) {
+            publicationDate = field.textContent.replace('Date de publication:', '').trim();
+        } else if (field.textContent.includes('Autre Langue:')) {
+            otherLanguage = field.textContent.replace('Autre Langue:', '').trim();
+        } else if (field.textContent.includes('Date de priorité:')) {
+            priorityDate = field.textContent.replace('Date de priorité:', '').trim();
+        } else if (field.textContent.includes('Date de dépôt:')) {
+            applicationDate = field.textContent.replace('Date de dépôt:', '').trim();
+        }
+    });
+
+    // Extraire la description complète
+    const fullDescription = document.getElementById('full-description').innerText;
+
+    // Extraire les 20 premiers mots de la description
+    const descriptionWords = fullDescription.split(/\s+/).slice(0, 34);
+
+    // Regrouper les mots en groupes de 6 et les rejoindre avec un espace
+    const groupedWords = [];
+    for (let i = 0; i < descriptionWords.length; i += 6) {
+        groupedWords.push(descriptionWords.slice(i, i + 6).join(' '));
+    }
+
+    // Rejoindre les groupes de mots avec un retour à la ligne
+    const descriptionLines = groupedWords.join('\n');
+
+    // Écrire les informations extraites dans la bordure de la page PDF
+    page.drawText('\u2022 Titre: ', { x: borderX + 10, y: borderY + borderHeight - 20, ...styles.title });
+    page.drawText(title, { x: borderX + 100, y: borderY + borderHeight - 20, ...styles.fieldValue });
+    page.drawText('\u2022 ID: ', { x: borderX + 10, y: borderY + borderHeight - 40, ...styles.title });
+    page.drawText(id, { x: borderX + 100, y: borderY + borderHeight - 40, ...styles.fieldValue });
+    page.drawText('\u2022 Publication: ', { x: borderX + 10, y: borderY + borderHeight - 60, ...styles.title });
+    if (publicationDate) {
+        page.drawText(publicationDate, { x: borderX + 200, y: borderY + borderHeight - 60, ...styles.fieldValue });
+    }
+    page.drawText('\u2022 Langue: ', { x: borderX + 10, y: borderY + borderHeight - 80, ...styles.title });
+    if (otherLanguage) {
+        page.drawText(otherLanguage, { x: borderX + 130, y: borderY + borderHeight - 80, ...styles.fieldValue });
+    }
+    page.drawText('\u2022 Priorité: ', { x: borderX + 10, y: borderY + borderHeight - 100, ...styles.title });
+    if (priorityDate) {
+        page.drawText(priorityDate, { x: borderX + 130, y: borderY + borderHeight - 100, ...styles.fieldValue });
+    }
+    page.drawText('\u2022 Dépôt: ', { x: borderX + 10, y: borderY + borderHeight - 120, ...styles.title });
+    if (applicationDate) {
+        page.drawText(applicationDate, { x: borderX + 200, y: borderY + borderHeight - 120, ...styles.fieldValue });
+    }
+    page.drawText('\u2022 Recap: ', { x: borderX + 10, y: borderY + borderHeight - 140, ...styles.title });
+    page.drawText(descriptionLines, { x: borderX + 130, y: borderY + borderHeight - 140, ...styles.fieldValue });
+
+    // Espacement entre la phrase de fin et la bordure
+    const closingPhraseBorderSpace = 40;
+
+    // Ajouter la phrase de fin après la bordure
+    const closingPhrase = "En vous souhaitant une bonne réception,\n\nBien cordialement.";
+    const closingPhraseX = borderX + 10; // Ajustez la position X en fonction de la bordure
+    const closingPhraseY = borderY - closingPhraseBorderSpace; // Ajustez la position Y en fonction de l'espace entre la phrase et la bordure
+    page.drawText(closingPhrase, {
+        x: closingPhraseX,
+        y: closingPhraseY,
+        ...styles.fieldValue // Utilisez les styles de texte personnalisés si nécessaire
+    });
+
+    // Télécharger le document PDF généré
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = 'brevet.pdf';
+    link.click();
+});
+
+</script>
+</body>
+</html>

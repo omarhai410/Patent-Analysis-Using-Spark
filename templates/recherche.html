@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AGROPA</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='feuille.png') }}">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+   <style>
+
+ .list-group-item {
+        text-align: left; /* Alignement à gauche */
+    }
+/* Styles pour placer l'icône de la poubelle à droite de la date */
+#historiqueList li {
+    position: relative;
+    display: block; /* Afficher les éléments l'un en dessous de l'autre */
+    margin-bottom: 10px; /* Ajouter un espace entre chaque élément */
+}
+
+.delete-icon {
+    position: absolute;
+    top: 50%; /* Aligner l'icône de la poubelle verticalement au centre */
+    right: 0;
+    transform: translateY(-50%); /* Aligner l'icône de la poubelle verticalement au centre */
+    cursor: pointer;
+}
+
+/* Alignement de la poubelle avec la date */
+.date {
+    display: inline-block; /* Afficher la date en ligne */
+    margin-right: 30px; /* Ajouter un espacement entre la date et l'icône de la poubelle */
+}
+
+       .custom-div {
+    width: 69.8%;
+    margin: 0 auto;
+}
+/* Style pour la date de consultation */
+.date {
+    float: right; /* Pour aligner le texte à droite */
+    font-size: 12px; /* Taille de la police */
+    color: #888; /* Couleur du texte */
+    margin-left: 10px; /* Marge à gauche pour séparer de l'élément principal */
+}
+
+
+
+    .container {
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+   #historiqueList {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    #historiqueList li {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    #historiqueList li:hover {
+      background-color: #f8f9fa;
+    }
+
+    .hover-effect:hover {
+    background-color: #f0f0f0; /* Changer la couleur de fond au survol */
+    cursor: pointer; /* Modifier le curseur au survol */
+    /* Ajouter d'autres styles au survol si nécessaire */
+}
+.list-group-item {
+        margin-bottom: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ajouter une ombre */
+        transition: box-shadow 0.3s ease; /* Ajouter une transition fluide */
+        border-radius: 10px;
+    }
+
+.btn-primary {
+    background-color: white;
+    color: black;
+    border: 1px solid green;
+    padding: 8px 16px;
+    font-size: 16px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: green;
+    border-color: white;
+
+
+.separator hr {
+    margin: 10px 0;
+}
+
+.centered-text {
+    display: inline-block;
+    background-color: white;
+    position: relative;
+    top: -10px;
+    padding: 0 10px;
+}
+h3.total-results {
+    font-size: 20px; /* Taille de la police */
+    color: #333; /* Couleur du texte */
+    margin-bottom: 10px; /* Marge en bas */
+}
+
+
+
+
+
+
+
+
+
+  </style>
+</head>
+<body>
+<div class="container2" style="background-color: white; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <a class="navbar-brand" href="#" style="font-family: 'Jokerman', cursive; color: black;">AGROPA</a>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link signup" href="/login2" style="color: black; border: 2px solid #000; border-radius: 20px; padding: 8px 15px; text-decoration: none; margin-right: 10px;">Deconnexion</a>
+                </li>
+                <li class="nav-item">
+                    {% if 'username' in session %}
+                        <a id="user-link" class="nav-link user" href="#" style="color: black; border: 2px solid #000; border-radius: 20px; padding: 8px 15px; display: inline-block; text-decoration: none; margin-left: 10px;">{{ session['username'] }}</a>
+                    {% else %}
+                        <a class="nav-link login" href="/login2" style="color: black; border: 2px solid #000; border-radius: 20px; padding: 8px 15px; display: inline-block; text-decoration: none; margin-right: 10px;">Login</a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+
+
+
+  <div class="container mt-5 border rounded p-4 shadow">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" id="ongletRecherche" data-toggle="tab" href="#tabRecherche">Recherche</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="ongletHistorique" data-toggle="tab" href="#tabHistorique">Historique</a>
+      </li>
+        <li class="nav-item">
+  <a class="nav-link" id="ongletVisualisation" data-toggle="tab" href="#tabVisualisation">Visualisation</a>
+</li>
+
+    </ul>
+
+    <div class="tab-content mt-3">
+      <div class="tab-pane fade show active" id="tabRecherche">
+        <a class="btn btn-outline-dark m-2" href="https://patentimages.storage.googleapis.com/f7/a7/f4/b0aee0e0db01f7/EP3251499B1.pdf">
+          Une armoire hydroponique de culture de plantes
+        </a>
+        <a class="btn btn-outline-dark m-2" href="https://patentimages.storage.googleapis.com/79/33/32/80a8cc234cdeeb/WO2020182840A1.pdf">
+          Dispositif de contrôle de traitement agricole
+        </a>
+        <a class="btn btn-outline-dark m-2" href="https://patentimages.storage.googleapis.com/91/36/ab/c6c5509a79c069/EP2403505B8.pdf">
+          Therapeutic uses of mastic gum fractions
+        </a>
+        <form action="/recherche" method="POST" class="mt-3 form-inline" id="searchForm">
+    <div class="form-group mr-2">
+        <label for="search" class="mr-2">Recherche :</label>
+        <input type="text" class="form-control" id="search" name="search" placeholder="Entrez votre recherche..." style="width: 870px;">
+    </div>
+    <input type="hidden" name="selected_ids_str" id="selected_ids_str"> <!-- Champ de formulaire caché pour stocker selected_ids_str -->
+    <button type="submit" class="btn btn-success">Rechercher</button>
+</form>
+
+
+        <div class="mt-3">
+          <label class="mr-2">Filtrer par office :</label>
+          <div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="filter" id="google" value="google" data-target="collection" data-action="find">
+    <label class="form-check-label" for="google">Google Patents</label>
+</div>
+<div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="filter" id="uspto" value="uspto" data-target="patentscope" data-action="find">
+    <label class="form-check-label" for="uspto">Wipo</label>
+</div>
+<div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="filter" id="wipo" value="wipo" data-target="patentscope" data-action="find">
+    <label class="form-check-label" for="wipo">Espace Net</label>
+</div>
+<div class="form-check form-check-inline">
+    <input class="form-check-input" type="radio" name="filter" id="epo" value="epo" data-target="FPO" data-action="find">
+    <label class="form-check-label" for="epo">FPO</label>
+</div>
+
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="tabHistorique">
+        <ul id="historiqueList"></ul>
+      </div>
+<div class="tab-pane fade" id="tabVisualisation">
+  <!-- Contenu de l'onglet Visualisation (rapport Power BI) -->
+  <iframe width="100%" height="600px" src="{{ url_for('static', filename='ra1.png') }}" frameborder="0" allowFullScreen="true"></iframe>
+    <BR>
+    <BR>
+
+      <iframe width="100%" height="600px" src="{{ url_for('static', filename='ra2.png') }}" frameborder="0" allowFullScreen="true"></iframe>
+
+</div>
+
+
+    </div>
+  </div>
+  <BR>
+
+
+  <BR>
+<section>
+{% if results %}
+    <ul class="list-group">
+        <div class="custom-div">
+            <h3 class="total-results">Total des résultats: {{ total_results }}</h3>
+            {% for result in results %}
+                <li class="list-group-item hover-effect">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="static/patent.png" alt="patent image" style="max-width: 200px; float: left; margin-right: 10px;">
+                            {% if result.pdf_link %}<strong>PDF:</strong> <a href="{{ result.pdf_link }}">Télécharger le PDF</a>{% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <h2>{{ result.title }}</h2>
+                            <p class="mb-0"><strong>ID:</strong> {{ result.ID }}</p>
+                            {% if result.inventors %}<p class="mb-0"><strong>Inventeurs:</strong> {% for inventor in result.inventors %}{{ inventor }}{% if not loop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+                            {% if result.publication_date %}<p class="mb-0"><strong>Date de publication:</strong> {{ result.publication_date }}</p>{% endif%}
+                            {% if result.country %}<p class="mb-0"><strong>Pays:</strong> {{ result.country }}</p>{% endif %}
+                            {% if result.current_assignees %}<p class="mb-0"><strong>Assignataires actuels:</strong> {% for assignee in result.current_assignees %}{{ assignee }}{% if not loop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+                            {% if result.priority_date %}<p class="mb-0"><strong>Date de priorité:</strong> {{ result.priority_date }}</p>{% endif %}
+                            {% if result.other_language %}<p class="mb-0"><strong>Langue:</strong> {{ result.other_language }}</p>{% endif %}
+                        </div>
+                        <div class="col-md-2">
+                            <a href="{{ url_for('detail', patent_id=result.ID) }}" class="btn btn-primary" id="detailBtn">Voir le détail</a>
+                            {% if 'username' in session %}
+                                <div class="text-muted" style="font-size: 0.8em; margin-top: 5px;">
+                                    Consultations: {{ result.consultation_count|default(0) }}<br>
+                                    Dernière consultation: {{ result.last_consulted|default("Pas encore consulté") }}<br>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+                {% if loop.index % 8 == 0 and loop.index != 0 %}
+                    </div>
+                    </ul>
+                    <div class="col-md-12 text-center">
+                        <hr style="clear:both; margin: 10px;">
+                        <details>
+                            <summary>Voir plus de résultats</summary>
+                            <ul class="list-group">
+                                <div class="custom-div">
+                {% endif %}
+            {% endfor %}
+        </div>
+    </ul>
+{% else %}
+    <p class="alert alert-info">Aucun résultat trouvé.</p>
+{% endif %}
+</section>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<div id="deleteConfirmationModal" class="modal" style="display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.5);">
+    <div class="modal-content" style="background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 60%;"> <!-- Largeur du contenu à 60% de la largeur de la fenêtre -->
+        <p>Voulez-vous vraiment supprimer cet élément ?</p>
+        <button id="confirmDelete" style="background-color: #4CAF50; color: white; padding: 10px 20px; margin: 5px; border: none; cursor: pointer; border-radius: 4px;">Confirmer</button>
+        <button id="cancelDelete" style="background-color: #f44336; color: white; padding: 10px 20px; margin: 5px; border: none; cursor: pointer; border-radius: 4px;">Annuler</button>
+    </div>
+</div>
+
+<script>
+$('#ongletHistorique').on('click', function() {
+    // Masquer la balise <section> lorsque l'onglet historique est cliqué
+    $('section').hide();
+
+    // Définir les collections
+    var collections = ['data', 'FPO', 'wip'];
+
+    // Faites une requête AJAX pour récupérer les identifiants et les dates de consultation des brevets consultés par l'utilisateur connecté
+    $.ajax({
+        url: '/historique',
+        type: 'GET',
+        success: function(data) {
+            // Convertir le dictionnaire en tableau pour trier par date de consultation
+            var sortedData = Object.entries(data).sort((a, b) => new Date(b[1]) - new Date(a[1]));
+
+            // Affichez les identifiants et les dates de consultation dans la liste d'historique
+            $('#historiqueList').empty(); // Effacez d'abord le contenu précédent
+            sortedData.forEach(function(entry) {
+                var patent_id = entry[0];
+                var date = entry[1];
+
+                collections.forEach(function(collection) {
+                    var listItem = $('<li id="' + patent_id + '">' + patent_id + '<span class="date centered-text">' + date + '</span><span class="delete-icon">&#128465;</span></li>'); // Ajoutez la classe centered-text à la balise de la date
+                    listItem.find('.delete-icon').hide();
+
+                    listItem.hover(function() {
+                        listItem.find('.delete-icon').show();
+                    }, function() {
+                        listItem.find('.delete-icon').hide();
+                    });
+
+                    listItem.find('.delete-icon').click(function(event) {
+                        event.stopPropagation();
+                        var $modal = $('#deleteConfirmationModal');
+                        $modal.data('patent_id', patent_id); // Stockez l'ID du brevet dans le modal pour une utilisation ultérieure
+                        $modal.show();
+                    });
+
+                    listItem.click(function() {
+                        // Rediriger vers la page de détail avec l'ID du brevet et la collection
+                        window.location.href = '/detail/' + patent_id + '?collection=' + collection + '&patentID=' + patent_id;
+                    });
+
+                    // Vérifier si l'élément listItem ne contient pas l'erreur UndefinedError
+                    if (!listItem.text().includes("UndefinedError")) {
+                        // Ajout de l'élément listItem à la liste historique
+                        $('#historiqueList').append(listItem);
+                    }
+                });
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Erreur lors de la récupération de l\'historique :', error);
+        }
+    });
+});
+
+
+// Gestionnaire d'événements pour le bouton de confirmation de suppression dans le modal
+$('#confirmDelete').click(function() {
+    var patent_id = $('#deleteConfirmationModal').data('patent_id');
+    // Modifier la partie de la requête AJAX pour supprimer l'élément
+$.ajax({
+    url: '/historique/delete/' + patent_id,
+    type: 'DELETE',
+    success: function(response) {
+        $('#' + patent_id).remove();
+        $('#deleteConfirmationModal').hide();
+        console.log(response.message);
+    },
+    error: function(xhr, status, error) {
+        console.error('Erreur lors de la suppression de l\'élément :', error);
+        $('#deleteConfirmationModal').hide();
+    }
+});
+
+});
+
+// Gestionnaire d'événements pour le bouton d'annulation de suppression dans le modal
+$('#cancelDelete').click(function() {
+    $('#deleteConfirmationModal').hide();
+});
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="userModal" tabindex="-1" role="dialog" aria-labelledby="userModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="userModalLabel">Informations Utilisateur</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="user-info">
+        <!-- Les informations de l'utilisateur seront affichées ici -->
+      </div>
+          <button type="button" class="btn btn-primary btn-sm mb-3 d-block mx-auto" id="create-alert" style="width: 300px;" onclick="sendAlertEmail()">Créer mon alerte</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    // Lorsque l'utilisateur clique sur le lien d'utilisateur
+    $('#user-link').click(function(e) {
+        e.preventDefault();
+
+        $.ajax({
+            url: '/user_info',
+            type: 'GET',
+            success: function(response) {
+                $('#user-info').html(response);
+                $('#userModal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+            }
+        });
+    });
+});
+</script>
+<script>
+    function sendAlertEmail() {
+        fetch('/send_email')
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message); // Afficher un message à l'utilisateur
+            })
+            .catch(error => {
+                console.error('Une erreur s\'est produite :', error);
+            });
+    }
+</script>
+
+<script>
+  $(document).ready(function() {
+    // Fonction pour récupérer les ID des champs de radio sélectionnés
+    function getSelectedRadioIds() {
+        var selectedIds = [];
+        $('input[type="radio"]:checked').each(function() {
+            selectedIds.push($(this).val()); // Utilisez .val() pour obtenir la valeur au lieu de .attr('id')
+        });
+        return selectedIds;
+    }
+
+    // Lorsqu'un champ de radio est cliqué
+    $('input[type="radio"]').click(function() {
+        var selectedIds = $(this).val(); // Récupérer la valeur du radio sélectionné
+        $('#selected_ids_str').val(selectedIds); // Mettre à jour la valeur de selected_ids_str
+
+        // Appel à la fonction pour traiter les ID sélectionnés et effectuer d'autres actions si nécessaire
+        processSelectedIds();
+    });
+
+    // Fonction pour traiter les ID sélectionnés
+    function processSelectedIds() {
+        var selectedIds = getSelectedRadioIds(); // Récupérer les ID sélectionnés
+        console.log("ID sélectionnés :", selectedIds); // Afficher les ID sélectionnés dans la console
+
+        // Envoi de la requête AJAX
+        $.ajax({
+            type: 'POST',
+            url: '/recherche',
+            data: { selectedIds: selectedIds, search: 'valeur_de_recherche' }, // Envoyer les ID sélectionnés
+            success: function(data) {
+                // Afficher les résultats sur la page
+                $('#results').html(data);
+            }
+        });
+    }
+
+    // Appel initial pour traiter les ID sélectionnés lors du chargement de la page
+    processSelectedIds();
+});
+
+
+</script>
+
+
+<script>$(document).ready(function() {
+    // Lorsque la page est prête
+
+    // Sélectionnez tous les liens des résultats de recherche
+    $('.list-group-item').each(function() {
+        var $this = $(this);
+
+        // Récupérez l'URL du lien
+        var pdfLink = $this.find('a').attr('href');
+
+        // Récupérez l'ID du brevet
+        var patentID = $this.find('p').filter(function() {
+            return $(this).text().startsWith('ID:');
+        }).text().replace('ID:', '').trim();
+
+        // Vérifiez si l'URL commence par "https://patentimages.storage"
+        if (pdfLink.startsWith('https://patentimages.storage')) {
+            // Si oui, définissez la valeur de la variable collection sur 'data'
+            var collection = 'data';
+        }
+        // Sinon, vérifiez si l'URL commence par "https://www.freepatentsonline.com"
+        else if (pdfLink.startsWith('https://www.freepatentsonline.com')) {
+            // Si oui, définissez la valeur de la variable collection sur 'FPO'
+            var collection = 'FPO';
+        }
+        // Sinon, vérifiez si l'URL commence par "https://worldwide.espacenet.com"
+        else if (pdfLink.startsWith('https://worldwide.espacenet.com')) {
+            // Si oui, définissez la valeur de la variable collection sur 'wip'
+            var collection = 'wip';
+        }
+
+        // Affichez l'ID et la collection dans la console
+        console.log("Patent ID:", patentID);
+        console.log("Collection:", collection);
+
+        // Mettre à jour l'URL du bouton avec le paramètre de collection
+        var detailBtn = $this.find('.btn-primary');
+        var currentUrl = detailBtn.attr('href');
+        var newUrl = currentUrl + '?collection=' + collection + '&patentID=' + patentID;
+        detailBtn.attr('href', newUrl);
+    });
+});
+
+
+</script>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+</body>
+</html>

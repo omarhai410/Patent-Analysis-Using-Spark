@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="icon" type="image/png" href="{{ url_for('static', filename='feuille.png') }}">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+         .footer a {
+            color: green !important;
+        }
+       .navbar {
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-dark .navbar-nav .nav-link {
+            color: black;
+        }
+
+        .navbar-dark .navbar-nav .nav-link:hover {
+            background-color: #f4f4f4;
+        }
+
+        .navbar-dark .navbar-brand {
+            color: black;
+        }
+
+        .custom-image {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+
+        .text-container {
+            padding: 20px;
+            position: relative;
+        }
+
+        .text-container p {
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            animation: fadeIn 2s infinite;
+            position: relative;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .login-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: black;
+            color: white;
+            border: 2px solid black;
+            border-radius: 20px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+
+        .login-btn::after {
+            content: '';
+            background-image: url('/static/fleche.png'); /* Chemin d'accès relatif à partir de la racine du serveur */
+            background-size: cover;
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            margin-left: 5px;
+            position: absolute;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            color: white;
+        }
+
+
+
+        .login-btn:hover::after {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .login-btn:hover {
+            padding-right: 50px;
+            color: white;
+
+        }
+        .login, .signup {
+      border: 2px solid #000; /* Bordure noire */
+      border-radius: 20px; /* Bordure circulaire */
+      padding: 8px 15px; /* Espacement intérieur pour le texte */
+      display: inline-block; /* Pour que la bordure s'adapte à la taille du contenu */
+      text-decoration: none; /* Supprimer la soulignement du lien par défaut */
+      margin-right: 10px;
+    }
+
+    </style>
+    <title>Menu Horizontal</title>
+</head>
+<body>
+
+<div class="container2">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+<a class="navbar-brand" href="#" style="font-family: 'Jokerman', cursive;">AGROPA</a>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link signup" href="/login3">Sign Up</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link login" href="/login2">Login</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+<br>
+    <div class="container border p-4">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="static/patent3.jpg" alt="Patent Image" class="img-fluid custom-image">
+        </div>
+        <div class="col-md-6 text-container">
+            <p>Plongez au cœur de l'avenir de l'agriculture avec AGROPA, votre guide incontournable dans le monde en constante évolution de la collecte de données agricoles. Nous sommes passionnés par la transformation numérique du secteur agricole et nous nous engageons à fournir des solutions innovantes pour maximiser le rendement, minimiser les risques et façonner le futur durable de l'agriculture.</p>
+            <p>Bienvenue sur AGROPA - Où les données agricoles rencontrent l'innovation et la croissance.</p>
+            <div class="container">
+    <a href="/login2" class="login-btn">GET STARTED</a>
+</div>
+        </div>
+
+    </div>
+</div>
+
+<div class="container mt-5">
+  <div class="row">
+    <!-- Service 1: Collecte Intelligente de Données -->
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img src="static/agriculture-intelligente.jpg" class="card-img-top" alt="Collecte Intelligente de Données">
+        <div class="card-body">
+          <h5 class="card-title">Collecte Intelligente de Données</h5>
+          <p class="card-text">Découvrez nos solutions avancées de collecte de données agricoles. Des capteurs intelligents aux drones, AGROPA vous offre une visibilité maximale pour des décisions éclairées et des rendements optimaux.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Service 2: Analyses Expertes pour une Gestion Avisée -->
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img src="static/Untitled-design-15.png" class="card-img-top" alt="Analyses Expertes pour une Gestion Avisée">
+        <div class="card-body">
+          <h5 class="card-title">Analyses Expertes pour une Gestion Avisée</h5>
+          <p class="card-text">Nos analyses approfondies transforment les données en informations utiles. Bénéficiez de rapports personnalisés pour optimiser vos pratiques agricoles grâce à nos experts qui décryptent les tendances, opportunités et défis.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Service 3: Formation à l'Innovation Agricole -->
+    <div class="col-md-4 mb-4">
+      <div class="card">
+        <img src="static/66f5f7e5f2c9793ce2b707da37d91bbe.jpg" class="card-img-top" alt="Formation à l'Innovation Agricole">
+        <div class="card-body">
+          <h5 class="card-title">Formation à l'Innovation Agricole</h5>
+          <p class="card-text">AGROPA vous guide dans l'adoption réussie de l'innovation. Que vous soyez agriculteur, chercheur ou professionnel, rejoignez nos programmes de formation pour maîtriser les technologies émergentes et rester à la pointe de l'agriculture innovante.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+<footer class="footer mt-auto py-3 bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <h5 style="font-family: 'Jokerman', cursive;">About AGROPA</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">What We Do</a></li>
+          <li><a href="#">Startup Services</a></li>
+          <li><a href="#">Partner With Us</a></li>
+          <li><a href="#">Work In Tech</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5 style="font-family: 'Jokerman', cursive;">Our Sectors</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">Our Space</a></li>
+          <li><a href="#">Who We Work With</a></li>
+          <li><a href="#">Invest With Us</a></li>
+          <li><a href="#">Careers at AGROPA</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5 style="font-family: 'Jokerman', cursive;">Resources</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">Magazine</a></li>
+          <li><a href="#">Events</a></li>
+          <li><a href="#">Research & Insights</a></li>
+          <li><a href="#">Our Results</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5 style="font-family: 'Jokerman', cursive;">Contact</h5>
+        <ul class="list-unstyled">
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Supporters</a></li>
+          <li><a href="#">Media & Press</a></li>
+          <li><a href="#">Legal</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <ul class="list-inline">
+          <li class="list-inline-item"><a href="#"><i class="fab fa-facebook"></i></a></li>
+          <li class="list-inline-item"><a href="#"><i class="fab fa-twitter"></i></a></li>
+          <li class="list-inline-item"><a href="#"><i class="fab fa-instagram"></i></a></li>
+          <li class="list-inline-item"><a href="#"><i class="fab fa-linkedin"></i></a></li>
+          <li class="list-inline-item"><a href="#"><i class="fab fa-youtube"></i></a></li>
+        </ul>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <p>Obtenez des renseignements en français</p>
+        <p>© 2024 Copyright AGROPA. All Rights Reserved</p>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
