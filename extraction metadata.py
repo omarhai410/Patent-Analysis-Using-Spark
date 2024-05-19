@@ -2,12 +2,16 @@ from selenium import webdriver
 from bs4 import BeautifulSoup
 import json
 from pymongo import MongoClient
-
+from kafka import KafkaProducer
+import time
 
 # Connexion à la base de données MongoDB
 client = MongoClient('localhost', 27017)  # Assurez-vous que MongoDB est en cours d'exécution sur localhost sur le port par défaut
 db = client['spark']  # Sélectionner la base de données
 collection = db['data']  # Sélectionner la collection
+
+# Configurer le producteur Kafka
+producer = KafkaProducer(bootstrap_servers='localhost:9092', value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
 with open('patent.txt', 'r') as file:
     lines = file.readlines()
@@ -34,7 +38,6 @@ chrome_options.binary_location = chrome_path
 
 # Initialiser le navigateur Chrome
 driver = webdriver.Chrome(options=chrome_options)
-
 
 for url in urls:
     # Accéder à l'URL
@@ -188,10 +191,18 @@ for url in urls:
     # Ajouter les données du brevet actuel à la liste
     patents_data.append(patent_data)
 
+    # Insérer les données dans MongoDB
     collection.insert_one(patent_data)
 
+    # Envoyer les données à Kafka
+    producer.send('patents', value=patent_data)
 
+    # Pause pour éviter de surcharger le serveur
+    time.sleep(1)
 
+# Fermer le producteur Kafka
+producer.flush()
+producer.close()
 
 # Fermer le navigateur
 driver.quit()
